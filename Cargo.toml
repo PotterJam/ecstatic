@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 clap = "=2.33.2"
+pulldown-cmark = "=0.10.0"
