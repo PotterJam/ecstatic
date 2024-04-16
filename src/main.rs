@@ -1,7 +1,9 @@
+use crate::markdown_parser::MarkdownParser;
 use clap::{App, Arg};
-use pulldown_cmark::{Options, Parser};
 
 extern crate clap;
+
+mod markdown_parser;
 
 fn main() {
     let matches = App::new("Ecstatic")
@@ -31,24 +33,18 @@ fn main() {
     println!("Input directory: {}", input_dir);
     println!("Output directory: {}", output_dir);
 
-    // Set up options and parser. Strikethroughs are not part of the CommonMark standard
-    // and we therefore must enable it explicitly.
-    let mut options = Options::empty();
-    options.insert(Options::ENABLE_STRIKETHROUGH);
-    options.insert(Options::ENABLE_TABLES);
-    options.insert(Options::ENABLE_FOOTNOTES);
-    options.insert(Options::ENABLE_TASKLISTS);
-    options.insert(Options::ENABLE_SMART_PUNCTUATION);
-    options.insert(Options::ENABLE_HEADING_ATTRIBUTES);
-    options.insert(Options::ENABLE_YAML_STYLE_METADATA_BLOCKS);
-
     // For every file with .md in the input_dir, do the following and save it to a file
-    let markdown_input =
-        "---\ntitle: A static blog post\n---\n# Top level\n## Second level\nLorem ipsum";
+    let mut some_markdown = String::from(
+        r#"---
+title: A static blog post
+---
+# Top level
+## Second level
+Lorem ipsum"#,
+    );
 
-    let markdown_parser = Parser::new_ext(markdown_input, options);
-    let mut html_output = String::new();
-    pulldown_cmark::html::push_html(&mut html_output, markdown_parser);
+    let to_html = MarkdownParser::to_html(&mut some_markdown);
+    let html_output = to_html;
 
     print!("{}", html_output);
 }
